@@ -1,12 +1,3 @@
-"""
-pytorchexample: A Flower / PyTorch app using Federated Learning.
-
-This example uses the Flower federated learning framework (flwr) and PyTorch's 
-MobileNetV2 architecture to perform model training and evaluation across multiple clients.
-
-Clients load their own partitions of the dataset, apply transformations, 
-and participate in federated learning by sharing model updates with the server.
-"""
 
 from collections import OrderedDict
 from typing import List
