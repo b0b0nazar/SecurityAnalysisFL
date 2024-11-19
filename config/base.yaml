@@ -4,9 +4,12 @@ seed: 42
 num_clients: 50
 fraction_train_clients: 0.1
 num_rounds: 100
+device: "cuda"  # "cuda" or "cpu"
+total_gpus: 1
+total_cpus: 32
 client_resources:
-  num_cpus: 64
-  num_gpus: 0.1  # Fraction of clients per gpu
+  num_cpus: 24 #number of cpus per client
+  num_gpus: 1  # Fraction of clients per gpu
 
 config_fit:
   lr: 0.01
@@ -28,10 +31,10 @@ model:
   num_classes: 9
 
 dp:
-  delta: 0.1
-  epsilon: 0.1
-  sensitivity: 0.1
-  clipping_norm: 0.1
+  delta: 0.0001
+  epsilon: 0.001
+  sensitivity: 1
+  clipping_norm: 1
 
 plot:
   smoothing_window: 1

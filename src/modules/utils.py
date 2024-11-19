@@ -1,6 +1,7 @@
+from typing import Tuple
+
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 from flwr.client.mod import LocalDpMod
 from torchvision.transforms import Compose, Normalize, ToTensor, Grayscale, Resize
 from torch.optim import Optimizer
