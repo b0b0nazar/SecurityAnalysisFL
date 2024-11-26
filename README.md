@@ -1,8 +1,10 @@
-# SecurityAnalysisFL
+# Towards Robust Federated Learning: Investigating Poisoning Attacks Under Clients Data Heterogeneity
+
+This study investigates the effects of poisoning attacks under data heterogeneity for federated learning. We conducted experiments to evaluate the impact of varying malicious client fractions and poison concentration levels on the model's accuracy. In addition, we explore the effects of poisoning attacks on **FedAvg** and **FedNova** models using medical imaging tasks. Our findings reveal that increasing data heterogeneity aggravates the effects of poisoning, with FedNova demonstrating greater resilience than FedAvg. We found that the number of malicious clients plays a more significant role in degrading performance than the ratio of poisoning samples shared by each attacker, suggesting that even modest levels of poisoning can be tolerated by most algorithms.
 
 # Federated Learning with PyTorch and Flower
 
-This project demonstrates a federated learning (FL) setup using PyTorch for training a MobileNetV2 model, with the Flower framework to manage the federated learning process. The project also incorporates differential privacy for enhanced security, using local differential privacy (DP) mechanisms.
+This project demonstrates federated learning (FL) setup using PyTorch for training a MobileNetV2 model, with the Flower framework to manage the federated learning process. The project also incorporates differential privacy for enhanced security, using local differential privacy (DP) mechanisms.
 
 ## Table of Contents
 - [Introduction](#introduction)
