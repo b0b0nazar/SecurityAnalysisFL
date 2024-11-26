@@ -5,10 +5,8 @@ import numpy as np
 import torch
 
 from flwr_datasets import FederatedDataset
-from ray import client
-from torch import nn, optim
+from torch import optim
 from torch.utils.data import DataLoader
-from torchvision import models
 
 from src.modules.utils import train, test, apply_transforms
 from src.modules.model import ModelFactory
@@ -157,7 +155,7 @@ class ClientFactory:
             valset = valset.with_transform(apply_transforms)
 
             # Create and return client
-            if conf.strategy.name == "FedAvg":
+            if conf.strategy.name == "FedAvg" or conf.strategy.name == "FedAvgM" or conf.strategy.name == "FedProx":
                 return FedAvgClient(trainset, valset, conf).to_client()
             elif conf.strategy.name == "FedNova":
                 return FedNovaClient(trainset, valset, conf).to_client()

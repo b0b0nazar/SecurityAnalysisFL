@@ -3,12 +3,14 @@ from torchvision import models
 import torch
 
 def mobilenet_v2(**kwargs):
+    """Create a MobileNetV2 model with the specified number of classes."""
     num_classes = kwargs.get('num_classes', 8)
     model = models.mobilenet_v2(weights=models.MobileNet_V2_Weights.DEFAULT)
     model.classifier[1] = nn.Linear(model.last_channel, num_classes)
     return model
 
 def resnet101(**kwargs):
+    """Create a ResNet101 model with the specified number of classes."""
     num_classes = kwargs.get('num_classes', 8)
     model = models.resnet101(weights=models.ResNet101_Weights.DEFAULT)
     model = torch.nn.Sequential(
@@ -21,6 +23,18 @@ def resnet101(**kwargs):
 class ModelFactory:
     @staticmethod
     def create_model(config):
+        """
+        Create a model based on the configuration provided.
+
+        Args:
+            config (dict): Configuration dictionary containing model details.
+
+        Returns:
+            torch.nn.Module: The created model instance.
+
+        Raises:
+            ValueError: If the model name is unknown.
+        """
 
         model_name = config.model.name
         if model_name == 'mobilenet_v2':

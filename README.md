@@ -63,7 +63,9 @@ To set up the environment using Conda, follow these steps:
    conda activate federated-learning
    ```
 
-4. **Verify installation**
+## usage
+### Running multi Experiments
+4. **Run multi Experiments**
     ```bash
-   conda list
+   cd scripts/ && bash multirun.sh
     ```
