@@ -8,38 +8,31 @@ This project demonstrates a federated learning (FL) setup using PyTorch for trai
 - [Introduction](#introduction)
 - [Features](#features)
 - [Installation](#installation)
-  - [Setting Up the Environment](#setting-up-the-environment)
-  - [Environment Configuration](#environment-configuration)
 - [Usage](#usage)
-  - [Data Preprocessing](#data-preprocessing)
-  - [Model Training](#model-training)
-  - [Model Evaluation](#model-evaluation)
   - [Running the Federated Learning Simulation](#running-the-federated-learning-simulation)
-- [Differential Privacy](#differential-privacy)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Introduction
 
-In this project, we leverage federated learning to train a neural network model in a distributed manner across multiple clients. Each client trains the model locally using its own data and shares only the updated model parameters with the central server. No raw data is shared, ensuring privacy. Additionally, the project employs **differential privacy** mechanisms to further safeguard the model training process.
+In this project, we leverage federated learning to train a neural network model in a distributed manner across multiple clients. Each client trains the model locally using its own data and shares only the updated model parameters with the central server. No raw data is shared, ensuring privacy.
 
 ### Key Components:
 - **Flower**: A federated learning framework used to simulate the FL process.
-- **PyTorch**: For building and training the MobileNetV2 model.
-- **Differential Privacy**: Ensuring local privacy of client updates using `LocalDpMod`.
+- **PyTorch**: For building and training the MobileNetV2 model
 
 ## Features
 
 - **Federated Learning Simulation**: Manage multiple clients and a central server to orchestrate model training.
-- **Differential Privacy**: Protect data during training with configurable DP mechanisms.
 - **MobileNetV2**: Utilize a pre-trained MobileNetV2 model, which is fine-tuned on custom datasets.
 - **Data Preprocessing**: Includes image transformations such as resizing, normalization, and grayscale conversion.
+- **Scalable Simulation**: Number of clients and resource allocation are parameterizable.
   
 ## Installation
 
 ### Prerequisites
 - Conda (Anaconda or Miniconda)
-- Python 3.8+
+- Python 3.10+
 
 ### Setting Up the Environment
 
