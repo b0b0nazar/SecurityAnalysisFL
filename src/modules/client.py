@@ -1,3 +1,4 @@
+import random
 from collections import OrderedDict
 from typing import List, Dict
 import flwr as fl
@@ -12,6 +13,16 @@ from src.modules.utils import train, test, apply_transforms
 from src.modules.model import ModelFactory
 
 
+def add_laplace_noise(tensor: torch.Tensor, epsilon: float) -> torch.Tensor:
+    """Add Laplace noise to the tensor for differential privacy."""
+    if epsilon == 0.0:
+        return tensor
+    sensitivity = 0.01  # Sensitivity is usually 1 for gradients
+    scale = sensitivity / epsilon
+    noise = torch.from_numpy(np.random.laplace(0, scale, tensor.shape)).to(tensor.device)
+    return tensor + noise
+
+
 class FlowerClient(fl.client.NumPyClient):
     def __init__(self, trainset, valset, config):
         self.trainset = trainset
@@ -20,6 +31,7 @@ class FlowerClient(fl.client.NumPyClient):
 
         # Initialize the model
         self.model = ModelFactory.create_model(config).to(self.device)
+        self.epsilon = config.ldp.epsilon
 
     def get_parameters(self, config=None):
         """Retrieve model parameters as NumPy arrays."""
@@ -33,7 +45,6 @@ class FlowerClient(fl.client.NumPyClient):
         loss, accuracy = test(self.model, valloader, device=self.device)
         return float(loss), len(valloader.dataset), {"accuracy": float(accuracy)}
 
-    # Placeholder fit method to be overridden by derived classes
     def fit(self, parameters, config):
         raise NotImplementedError("fit method must be implemented in subclasses.")
 
@@ -46,7 +57,13 @@ class FedAvgClient(FlowerClient):
         trainloader = DataLoader(self.trainset, batch_size=batch, shuffle=True)
 
         optimizer = optim.Adam(self.model.parameters(), lr=0.001)
+
+        # Train the model
         train(self.model, trainloader, optimizer, epochs=epochs, device=self.device)
+
+        # Add Laplace noise to model parameters for privacy
+        for name, param in self.model.named_parameters():
+            param.data = add_laplace_noise(param.data, self.epsilon)
 
         return self.get_parameters({}), len(trainloader.dataset), {}
 
@@ -55,39 +72,19 @@ class FedNovaClient(FlowerClient):
     def fit(self, parameters, config):
         set_params(self.model, parameters)
 
-        # Read from config
         batch, epochs = config["batch_size"], config["epochs"]
-
-        # Construct dataloader
         trainloader = DataLoader(self.trainset, batch_size=batch, shuffle=True)
 
-        # Define optimizer
         optimizer = optim.Adam(self.model.parameters(), lr=0.001)
-        if self.exp_config.var_local_epochs:
-            print('pot==================================')
-            seed_val = (
-                    2023
-                    + int(self.client_id)
-                    + int(self.exp_config.seed)
-            )
-            np.random.seed(seed_val)
-            num_epochs = np.random.randint(
-                self.exp_config.var_min_epochs, self.exp_config.var_max_epochs
-            )
-        else:
-            num_epochs = self.num_epochs
-        # Train
-        train(self.model, trainloader, self.optimizer, epochs=num_epochs, device=self.device)
 
-        # Get ratio by which the strategy would scale local gradients from each client
-        # We use this scaling factor to aggregate the gradients on the server
-        grad_scaling_factor: Dict[str, float] = self.optimizer.get_gradient_scaling()
+        # Train the model
+        train(self.model, trainloader, optimizer, epochs=epochs, device=self.device)
 
-        # Return local model and statistics
-        return self.get_parameters({}), len(trainloader.dataset), grad_scaling_factor
+        # Add Laplace noise to model parameters for privacy
+        for name, param in self.model.named_parameters():
+            param.data = add_laplace_noise(param.data, self.epsilon)
 
-
-
+        return self.get_parameters({}), len(trainloader.dataset), {}
 
 
 def set_params(model: torch.nn.ModuleList, params: List[fl.common.NDArrays]):
@@ -98,69 +95,44 @@ def set_params(model: torch.nn.ModuleList, params: List[fl.common.NDArrays]):
 
 
 def get_client_fn(dataset: FederatedDataset, num_classes):
-    """Return a function to construct a client.
-
-    The VirtualClientEngine will execute this function whenever a client is sampled by
-    the strategy to participate.
-    """
-
+    """Return a function to construct a client."""
     def client_fn(context) -> fl.client.Client:
         """Construct a FlowerClient with its own dataset partition."""
-
-        # Let's get the partition corresponding to the i-th client
         client_dataset = dataset.load_partition(
             int(context.node_config["partition-id"]), "train"
         )
-
-        # Now let's split it into train (90%) and validation (10%)
         client_dataset_splits = client_dataset.train_test_split(test_size=0.1, seed=42)
-
         trainset = client_dataset_splits["train"]
         valset = client_dataset_splits["test"]
 
-        # Now we apply the transform to each batch.
         trainset = trainset.with_transform(apply_transforms)
         valset = valset.with_transform(apply_transforms)
 
-        # Create and return client
         return FlowerClient(trainset, valset, num_classes).to_client()
 
     return client_fn
 
+
 class ClientFactory:
     @staticmethod
     def get_client_fn(dataset: FederatedDataset, conf):
-        """Return a function to construct a client.
-
-        The VirtualClientEngine will execute this function whenever a client is sampled by
-        the strategy to participate.
-        """
-
+        """Return a function to construct a client."""
         def client_fn(context) -> fl.client.Client:
-            """Construct a FlowerClient with its own dataset partition."""
-
-            # Let's get the partition corresponding to the i-th client
             client_dataset = dataset.load_partition(
                 int(context.node_config["partition-id"]), "train"
             )
-
-            # Now let's split it into train (90%) and validation (10%)
             client_dataset_splits = client_dataset.train_test_split(test_size=0.1, seed=42)
-
             trainset = client_dataset_splits["train"]
             valset = client_dataset_splits["test"]
 
-            # Now we apply the transform to each batch.
             trainset = trainset.with_transform(apply_transforms)
             valset = valset.with_transform(apply_transforms)
 
-            # Create and return client
-            if conf.strategy.name == "FedAvg" or conf.strategy.name == "FedAvgM" or conf.strategy.name == "FedProx":
+            if conf.strategy.name in ["FedAvg", "FedAvgM", "FedProx"]:
                 return FedAvgClient(trainset, valset, conf).to_client()
             elif conf.strategy.name == "FedNova":
                 return FedNovaClient(trainset, valset, conf).to_client()
             else:
                 raise ValueError(f"Unsupported Algorithm name: {conf.model.name}")
-
 
         return client_fn

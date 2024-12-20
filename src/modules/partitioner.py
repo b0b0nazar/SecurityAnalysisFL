@@ -19,17 +19,6 @@ class PartitionFactory:
                                         alpha=dataset_config.partitioner.alpha,
                                         min_partition_size=0,
                                     )})
-        elif partitioner_name == "PathologicalPartitioner":  # Non Iid
-            print("pathological__________________")
-            return FederatedDataset(dataset=dataset_config.name,
-                                    subset=dataset_config.subset,
-                                    data_dir=dataset_config.data_dir,
-                                    partitioners={"train": PathologicalPartitioner(
-                                        num_partitions=partitions_number,
-                                        seed=dataset_config.seed,
-                                        partition_by="label",
-                                        num_classes_per_partition=dataset_config.partitioner.num_classes_per_partition,
-                                    )})
         elif partitioner_name == "IiD":  # IiD
             print("iid______________")
             return FederatedDataset(dataset=dataset_config.name,

@@ -36,7 +36,7 @@ def main(cfg: DictConfig):
     # Plot the smoothed history of the simulation results
     smooth_plot(
         data=history,
-        title=f"{cfg.dataset.name.split('/')[-1]} - {cfg.dataset.partitioner.name.split('Partitioner')[0]} - {cfg.num_clients} clients with 10 per round",
+        title=f"{cfg.dataset.name.split('/')[-1]} - {cfg.dataset.partitioner.name.split('Partitioner')[0]} - {cfg.client.count} clients with 10 per round",
         path=save_path,
         smoothing_window=cfg.plot.smoothing_window
     )

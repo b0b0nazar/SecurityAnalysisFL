@@ -53,15 +53,15 @@ run_experiment() {
 #run_experiment "FedAvg" "mobilenet_v2" "tissuemnist" "DirichletPartitioner" "alpha" 0.3 8
 #run_experiment "FedAvg" "mobilenet_v2" "tissuemnist" "DirichletPartitioner" "alpha" 0.1 8
 
-# Run experiments for bloodmnist with PathologicalPartitioner
-run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "PathologicalPartitioner" "num_classes_per_partition" 2 8
-run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "PathologicalPartitioner" "num_classes_per_partition" 4 8
-run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "PathologicalPartitioner" "num_classes_per_partition" 7 8
+## Run experiments for bloodmnist with PathologicalPartitioner
+#run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "PathologicalPartitioner" "num_classes_per_partition" 2 8
+#run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "PathologicalPartitioner" "num_classes_per_partition" 4 8
+#run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "PathologicalPartitioner" "num_classes_per_partition" 7 8
 
-# Run experiments for bloodmnist with DirichletPartitioner
-run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "DirichletPartitioner" "alpha" 0.9 8
-run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "DirichletPartitioner" "alpha" 0.3 8
-run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "DirichletPartitioner" "alpha" 0.1 8
+## Run experiments for bloodmnist with DirichletPartitioner
+#run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "DirichletPartitioner" "alpha" 0.9 8
+#run_experiment "FedAvg" "mobilenet_v2" "dermamnist" "DirichletPartitioner" "alpha" 0.3 8
+run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "IiD" "alpha" 0.9 8
 
 # Final report
 echo "Experiments completed!"
