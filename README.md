@@ -1,6 +1,5 @@
 # SecurityAnalysisFL
 
-# Federated Learning with PyTorch and Flower
 
 This project demonstrates a federated learning (FL) setup using PyTorch for training a MobileNetV2 model, with the Flower framework to manage the federated learning process. The project also incorporates differential privacy for enhanced security, using local differential privacy (DP) mechanisms.
 
