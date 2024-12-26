@@ -5,7 +5,6 @@ import hydra
 from pathlib import Path
 import flwr as fl
 
-from src.modules.attacks.attack import AttackFactory
 from src.modules.client import ClientFactory
 from src.modules.partitioner import PartitionFactory
 from src.modules.plot import smooth_plot

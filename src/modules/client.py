@@ -1,6 +1,5 @@
-import random
 from collections import OrderedDict
-from typing import List, Dict
+from typing import List
 import flwr as fl
 import numpy as np
 import torch
@@ -9,7 +8,7 @@ from flwr_datasets import FederatedDataset
 from torch import optim
 from torch.utils.data import DataLoader
 
-from src.modules.attacks.attack import Benin, AttackFactory
+from src.modules.attack import Benin, AttackFactory
 from src.modules.utils import train, test, apply_transforms
 from src.modules.model import ModelFactory
 

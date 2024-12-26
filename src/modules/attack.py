@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 from torchvision.transforms.v2.functional import gaussian_noise
 
-from src.modules.attacks.utils import get_ar_params
+from src.modules.utils import get_ar_params
 
 
 class Attack(ABC):
