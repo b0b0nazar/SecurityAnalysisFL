@@ -3,38 +3,46 @@ model:
   num_classes: 9
 
 client:
-  count: 50
+  count: 4
   resources:
-    num_cpus: 24 #number of cpus per client
-    num_gpus: 0.5  # Fraction of clients per gpu
+    num_cpus: 1 #number of cpus per client
+    num_gpus: 1 # Fraction of clients per gpu
 
 dataset:
-  name: "albertvillanova/medmnist-v2"  # dataset name on Hugging Face [ "BahaaEldin0/NIH-Chest-Xray-14", BahaaEldin0/NIH-Chest-Xray-14-with-Augmentation, "hf-vision/chest-xray-pneumonia", "marmal88/skin_cancer", SilpaCS/Augmented_alzheimer]
+  name: "albertvillanova/medmnist-v2" # dataset name on Hugging Face [ "BahaaEldin0/NIH-Chest-Xray-14", BahaaEldin0/NIH-Chest-Xray-14-with-Augmentation, "hf-vision/chest-xray-pneumonia", "marmal88/skin_cancer", SilpaCS/Augmented_alzheimer]
   subset: "bloodmnist"
   data_dir: "./data"
   seed: 123
   partitioner:
-    name: "IiD"  # Type of data partition ["PathologicalPartitioner", "DirichletPartitioner", "Iid"]
-    alpha: 0.1  # heterogeneity degree *DirichletPartitioner
-    num_classes_per_partition: 2  # number of classes per partition *PathologicalPartitioner
-
+    name: "IiD" # Type of data partition ["PathologicalPartitioner", "DirichletPartitioner", "Iid"]
+    alpha: 0.1 # heterogeneity degree *DirichletPartitioner
+    num_classes_per_partition: 2 # number of classes per partition *PathologicalPartitioner
 
 strategy:
   name: "FedAvg"
-  fraction_train_clients: 0.1
+  fraction_train_clients: 0.7
   config_fit:
     lr: 0.01
     momentum: 0.9
     local_epochs: 2
-    local_batch_size: 64
-  num_rounds: 100
-  device: "cuda"  # "cuda" or "cpu"
+    local_batch_size: 16
+  num_rounds: 50
+  device: "cuda" # "cuda" or "cpu"
   total_gpus: 1
   total_cpus: 32
 
 poisoning:
+  name: "ar"
+  epsilon: 0.031372549
+  gaussian_noise: False
+  crop: 0
+  size: [224,224]
+  fraction: 1.0
+
+
   attack: "label-flipping"
-  fraction: 0.1
+
+
   target_label: 0
   attack_type: "targeted"
   attack_ratio: 0.5
@@ -52,7 +60,6 @@ ldp:
   epsilon: 0.7
   delta: 1e-5
   noise_multiplier: 0.1
-
 
 plot:
   smoothing_window: 2
