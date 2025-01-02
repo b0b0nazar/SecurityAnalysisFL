@@ -14,7 +14,7 @@ class StrategyFactory:
                 fraction_evaluate=0.05,  # Sample 5% of available clients for evaluation
                 min_available_clients=3,
                 on_fit_config_fn=fit_config,
-                evaluate_metrics_aggregation_fn=median_aggregate,  # Aggregate federated metrics
+                evaluate_metrics_aggregation_fn=weighted_average,  # Aggregate federated metrics
                 evaluate_fn=ServerFactory.get_evaluate_fn(
                     centralized_testset, config),  # Global evaluation function
 

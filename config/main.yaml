@@ -3,10 +3,12 @@ model:
   num_classes: 9
 
 client:
-  count: 50
+  count: 4
   resources:
+
     num_cpus: 24 #number of cpus per client
     num_gpus: 0.5 # Fraction of clients per gpu
+
 
 dataset:
   name: "albertvillanova/medmnist-v2" # dataset name on Hugging Face [ "BahaaEldin0/NIH-Chest-Xray-14", BahaaEldin0/NIH-Chest-Xray-14-with-Augmentation, "hf-vision/chest-xray-pneumonia", "marmal88/skin_cancer", SilpaCS/Augmented_alzheimer]
@@ -20,7 +22,7 @@ dataset:
 
 strategy:
   name: "FedAvg"
-  fraction_train_clients: 0.1
+  fraction_train_clients: 0.7
   config_fit:
     lr: 0.01
     momentum: 0.9
@@ -37,7 +39,9 @@ poisoning:
   gaussian_noise: False
   crop: 0
   size: [224,224]
+
   fraction: 0.5
+
 
 
   attack: "label-flipping"
