@@ -5,8 +5,10 @@ model:
 client:
   count: 4
   resources:
-    num_cpus: 1 #number of cpus per client
-    num_gpus: 1 # Fraction of clients per gpu
+
+    num_cpus: 24 #number of cpus per client
+    num_gpus: 0.5 # Fraction of clients per gpu
+
 
 dataset:
   name: "albertvillanova/medmnist-v2" # dataset name on Hugging Face [ "BahaaEldin0/NIH-Chest-Xray-14", BahaaEldin0/NIH-Chest-Xray-14-with-Augmentation, "hf-vision/chest-xray-pneumonia", "marmal88/skin_cancer", SilpaCS/Augmented_alzheimer]
@@ -37,7 +39,9 @@ poisoning:
   gaussian_noise: False
   crop: 0
   size: [224,224]
-  fraction: 1.0
+
+  fraction: 0.5
+
 
 
   attack: "label-flipping"
