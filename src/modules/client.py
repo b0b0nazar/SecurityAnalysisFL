@@ -1,6 +1,5 @@
-import random
 from collections import OrderedDict
-from typing import List, Dict
+from typing import List
 import flwr as fl
 import numpy as np
 import torch
@@ -9,6 +8,7 @@ from flwr_datasets import FederatedDataset
 from torch import optim
 from torch.utils.data import DataLoader
 
+from src.modules.attack import Benin, AttackFactory
 from src.modules.utils import train, test, apply_transforms
 from src.modules.model import ModelFactory
 
@@ -24,14 +24,23 @@ def add_laplace_noise(tensor: torch.Tensor, epsilon: float) -> torch.Tensor:
 
 
 class FlowerClient(fl.client.NumPyClient):
-    def __init__(self, trainset, valset, config):
+    def __init__(self, trainset, valset, config, client_id=None):
+        self.client_id = client_id
         self.trainset = trainset
         self.valset = valset
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
         # Initialize the model
         self.model = ModelFactory.create_model(config).to(self.device)
         self.epsilon = config.ldp.epsilon
+
+        fraction = int(config.poisoning.fraction)
+        r = np.random.random(1)[0]
+        if r < fraction:
+            print(f"client {client_id} is poisoned------------------------------------")
+            self.attack = AttackFactory.create_attack(config)
+        else:
+            print(f"client {client_id} is Benin----------------------------------------")
+            self.attack = Benin()
 
     def get_parameters(self, config=None):
         """Retrieve model parameters as NumPy arrays."""
@@ -59,7 +68,7 @@ class FedAvgClient(FlowerClient):
         optimizer = optim.Adam(self.model.parameters(), lr=0.001)
 
         # Train the model
-        train(self.model, trainloader, optimizer, epochs=epochs, device=self.device)
+        train(self.model, trainloader, optimizer, self.attack,epochs=epochs, device=self.device)
 
         # Add Laplace noise to model parameters for privacy
         for name, param in self.model.named_parameters():
@@ -78,7 +87,7 @@ class FedNovaClient(FlowerClient):
         optimizer = optim.Adam(self.model.parameters(), lr=0.001)
 
         # Train the model
-        train(self.model, trainloader, optimizer, epochs=epochs, device=self.device)
+        train(self.model, trainloader, optimizer, self.attack,epochs=epochs, device=self.device)
 
         # Add Laplace noise to model parameters for privacy
         for name, param in self.model.named_parameters():
@@ -118,8 +127,9 @@ class ClientFactory:
     def get_client_fn(dataset: FederatedDataset, conf):
         """Return a function to construct a client."""
         def client_fn(context) -> fl.client.Client:
+            client_id = int(context.node_config["partition-id"])
             client_dataset = dataset.load_partition(
-                int(context.node_config["partition-id"]), "train"
+                client_id, "train"
             )
             client_dataset_splits = client_dataset.train_test_split(test_size=0.1, seed=42)
             trainset = client_dataset_splits["train"]
@@ -129,9 +139,9 @@ class ClientFactory:
             valset = valset.with_transform(apply_transforms)
 
             if conf.strategy.name in ["FedAvg", "FedAvgM", "FedProx"]:
-                return FedAvgClient(trainset, valset, conf).to_client()
+                return FedAvgClient(trainset, valset, conf, client_id).to_client()
             elif conf.strategy.name == "FedNova":
-                return FedNovaClient(trainset, valset, conf).to_client()
+                return FedNovaClient(trainset, valset, conf, client_id).to_client()
             else:
                 raise ValueError(f"Unsupported Algorithm name: {conf.model.name}")
 

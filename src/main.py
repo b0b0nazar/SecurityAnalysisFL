@@ -4,6 +4,7 @@ from hydra.core.hydra_config import HydraConfig
 import hydra
 from pathlib import Path
 import flwr as fl
+
 from src.modules.client import ClientFactory
 from src.modules.partitioner import PartitionFactory
 from src.modules.plot import smooth_plot
@@ -21,6 +22,10 @@ def main(cfg: DictConfig):
     fds = PartitionFactory.get_fds(cfg)
     centrelized_testset = fds.load_split("test")
 
+    #attack = AttackFactory.create_attack(cfg)
+
+
+    #exit()
     # Start the federated learning simulation
     history = fl.simulation.start_simulation(
         client_fn=ClientFactory.get_client_fn(fds, cfg),
