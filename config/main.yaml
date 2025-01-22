@@ -3,11 +3,11 @@ model:
   num_classes: 9
 
 client:
-  count: 4
+  count: 50
   resources:
 
-    num_cpus: 24 #number of cpus per client
-    num_gpus: 0.5 # Fraction of clients per gpu
+    num_cpus: 2 #number of cpus per client
+    num_gpus: 1 # Fraction of clients per gpu
 
 
 dataset:
@@ -40,7 +40,7 @@ poisoning:
   crop: 0
   size: [224,224]
 
-  fraction: 0.5
+  fraction: 0
 
 
 

@@ -1,6 +1,5 @@
 import flwr as fl
-from src.modules.server import fit_config, weighted_average, ServerFactory, trimmed_mean_aggregate, krum_aggregate, \
-    median_aggregate
+from src.modules.server import fit_config, weighted_average, ServerFactory
 
 
 class StrategyFactory:

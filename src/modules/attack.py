@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 import torch
 import torch.nn.functional as F
 import numpy as np
-from torchvision.transforms.v2.functional import gaussian_noise
 
 from src.modules.utils import get_ar_params
 
