@@ -18,7 +18,7 @@ def fit_config(epochs: int) -> Dict[str, Scalar]:
     """Return a configuration with static batch size and (local) epochs."""
     config = {
         "epochs": 2,  # Number of local epochs done by clients
-        "batch_size": 64,  # Batch size to use by clients during fit()
+        "batch_size": 16,  # Batch size to use by clients during fit()
     }
     return config
 
@@ -67,9 +67,11 @@ class ServerFactory:
             # Disable tqdm for dataset preprocessing
             disable_progress_bar()
 
+            # Create DataLoader and evaluate the model for loss, accuracy, precision and recall
             testloader = DataLoader(testset, batch_size=32)
-            loss, accuracy = test(model, testloader, device=device)
+            loss, accuracy, precision, recall = test(model, testloader, device=device)
 
-            return loss, {"accuracy": accuracy}
+            # Return loss, accuracy, precision, recall or any other custom metric
+            return loss, {"accuracy": accuracy, "precision": precision, "recall": recall}
 
         return evaluate

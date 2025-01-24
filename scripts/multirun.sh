@@ -61,7 +61,23 @@ run_experiment() {
 ## Run experiments for bloodmnist with DirichletPartitioner
 #run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "DirichletPartitioner" "alpha" 0.9 8
 #run_experiment "FedAvg" "mobilenet_v2" "dermamnist" "DirichletPartitioner" "alpha" 0.3 8
+#run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "IiD" "alpha" 0.9 8
+
+
+## Run experiments with different strategies and models
+
 run_experiment "FedAvg" "mobilenet_v2" "bloodmnist" "IiD" "alpha" 0.9 8
+run_experiment "FedAvg" "resnet101" "bloodmnist" "IiD" "alpha" 0.9 8
+
+run_experiment "FedAvgM" "mobilenet_v2" "bloodmnist" "IiD" "alpha" 0.9 8
+run_experiment "FedAvgM" "resnet101" "bloodmnist" "IiD" "alpha" 0.9 8
+
+run_experiment "FedProx" "mobilenet_v2" "bloodmnist" "IiD" "alpha" 0.9 8
+run_experiment "FedProx" "resnet101" "bloodmnist" "IiD" "alpha" 0.9 8
+
+run_experiment "FedNova" "mobilenet_v2" "bloodmnist" "IiD" "alpha" 0.9 8
+run_experiment "FedNova" "resnet101" "bloodmnist" "IiD" "alpha" 0.9 8
+
 
 # Final report
 echo "Experiments completed!"

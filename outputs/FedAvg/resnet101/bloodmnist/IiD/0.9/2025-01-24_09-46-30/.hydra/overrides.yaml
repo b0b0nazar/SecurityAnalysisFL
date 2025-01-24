@@ -1,0 +1,6 @@
+- dataset.subset=bloodmnist
+- strategy.name=FedAvg
+- model.name=resnet101
+- dataset.partitioner.name=IiD
+- dataset.partitioner.alpha=0.9
+- model.num_classes=8

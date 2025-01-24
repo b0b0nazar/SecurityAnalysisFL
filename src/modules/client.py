@@ -51,8 +51,9 @@ class FlowerClient(fl.client.NumPyClient):
         set_params(self.model, parameters)
         valloader = DataLoader(self.valset, batch_size=64)
 
-        loss, accuracy = test(self.model, valloader, device=self.device)
-        return float(loss), len(valloader.dataset), {"accuracy": float(accuracy)}
+        # Evaluate the model for loss, accuracy, precision, and recall
+        loss, accuracy, precision, recall = test(self.model, valloader, device=self.device)
+        return float(loss), len(valloader.dataset), {"accuracy": float(accuracy), "precision": float(precision), "recall": float(recall)}
 
     def fit(self, parameters, config):
         raise NotImplementedError("fit method must be implemented in subclasses.")

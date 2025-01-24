@@ -5,7 +5,7 @@ from flwr.client.mod import LocalDpMod
 from torchvision.transforms import Compose, Normalize, ToTensor, Grayscale, Resize
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-
+from sklearn.metrics import precision_score, recall_score
 
 
 
@@ -106,6 +106,10 @@ def test(net: nn.Module, testloader: DataLoader, device: str) -> Tuple[float, fl
     correct, total_loss = 0, 0.0
     net.eval()  # Set model to evaluation mode
 
+    # Collect predictions and labels for metrics
+    all_preds = []
+    all_labels = []
+
     with torch.no_grad():
         for batch in testloader:
             # Move data to device
@@ -119,9 +123,17 @@ def test(net: nn.Module, testloader: DataLoader, device: str) -> Tuple[float, fl
             _, predicted = torch.max(outputs, 1)
             correct += (predicted == labels).sum().item()
 
-    # Calculate accuracy
+            # Store predictions and labels for metrics
+            all_preds.extend(predicted.cpu().numpy())
+            all_labels.extend(labels.cpu().numpy())
+
+    # Compute metrics
     accuracy = correct / len(testloader.dataset)
-    return total_loss, accuracy
+    loss = total_loss / len(testloader)
+    precision = precision_score(all_labels, all_preds, average="macro")
+    recall = recall_score(all_labels, all_preds, average="macro")
+    
+    return loss, accuracy, precision, recall
 
 
 import os

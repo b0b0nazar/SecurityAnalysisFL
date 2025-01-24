@@ -1,0 +1,6 @@
+- dataset.subset=bloodmnist
+- strategy.name=FedNova
+- model.name=mobilenet_v2
+- dataset.partitioner.name=IiD
+- dataset.partitioner.alpha=0.9
+- model.num_classes=8
